@@ -179,8 +179,6 @@ public class LGAFocusPage implements Handler {
 
     private String getTableData(String tableName) throws SQLException {
         StringBuilder html = new StringBuilder();
-        String[] columnNames = {"LGA Code", "LGA Name", "Region Type", "Council Name", "Regional Groups", "Collected ", "Recycled", "Disposed"}; 
-        
         String query = "SELECT * FROM " + tableName;
 
         try (Connection conn = DriverManager.getConnection(DATABASE);
@@ -188,16 +186,19 @@ public class LGAFocusPage implements Handler {
              ResultSet rs = pstmt.executeQuery()) {
 
             html.append("<table border='1'><tr>");
-            int columnCount = rs.getMetaData().getColumnCount();
-            for (int i = 1; i <= columnCount; i++) {
-                html.append("<th>").append(rs.getMetaData().getColumnName(i)).append("</th>");
-            }
+            // Removed the loop that adds column names
             html.append("</tr>");
 
             while (rs.next()) {
                 html.append("<tr>");
+                int columnCount = rs.getMetaData().getColumnCount(); // Moved inside the loop
                 for (int i = 1; i <= columnCount; i++) {
-                    html.append("<td>").append(rs.getString(i)).append("</td>");
+                    String cellValue = rs.getString(i);
+                    if (cellValue != null) { // Check for null values
+                        html.append("<td>").append(cellValue).append("</td>");
+                    } else {
+                        html.append("<td></td>"); // Optionally, you can append an empty cell for null values
+                    }
                 }
                 html.append("</tr>");
             }

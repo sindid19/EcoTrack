@@ -2,6 +2,9 @@ package app;
 
 import io.javalin.http.Handler;
 import io.javalin.http.Context;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 
 public class AboutUsPage implements Handler {
     public static final String URL = "/about";
@@ -155,6 +158,16 @@ footer {
             <body>
         """;
 
+        // Check if the request is a POST for form submission
+        if ("POST".equalsIgnoreCase(context.method())) {
+            String name = context.formParam("name");
+            String email = context.formParam("email");
+            String message = context.formParam("message");
+            saveContactForm(name, email, message);
+            context.html("<h1>Thank you for your message!</h1>");
+            return;
+        }
+
         // Add header (reusing structure from PageIndex.java)
         html += """
                 <header>
@@ -220,5 +233,21 @@ footer {
         """;
 
         context.html(html);
+    }
+
+    // Method to save contact form data to SQLite database
+    private void saveContactForm(String name, String email, String message) {
+        String url = "jdbc:sqlite:contact.db"; // Update with your database path
+        String sql = "INSERT INTO contact_form(name, email, message) VALUES(?, ?, ?)";
+
+        try (Connection conn = DriverManager.getConnection(url);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, name);
+            pstmt.setString(2, email);
+            pstmt.setString(3, message);
+            pstmt.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace(); // Handle exceptions appropriately
+        }
     }
 } 

@@ -41,15 +41,12 @@ public class App {
         app.get(PageIndex.URL, new PageIndex());
         app.get(AboutUsPage.URL, new AboutUsPage());
 
-        app.get(DashboardPage.URL, new DashboardPage());
+        // app.get(DashboardPage.URL, new DashboardPage());
         app.get(TipsPage.URL, new TipsPage());
         app.get(LookupPage.URL, new LookupPage());
         app.get(MissionPage.URL, new MissionPage());
         app.get(LGAFocusPage.URL, new LGAFocusPage());
         app.get(RegionalGroupPage.URL, new RegionalGroupPage());
-
-        // Add route for PageTables
-        app.get("/tables", new PageTables());
     }
 
 }
